@@ -1,0 +1,29 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nuxt dev --hostname nuxt3 --port 3060",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@mdi/font": "^7.0.96",
+    "@mdi/js": "^7.0.96",
+    "nuxt": "3.0.0-rc.11",
+    "sass": "^1.55.0",
+    "sass-loader": "^13.0.2",
+    "webpack": "^5.74.0"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.4.2",
+    "axios": "^0.27.2",
+    "browserslist": "^4.21.5",
+    "caniuse-lite": "^1.0.30001488",
+    "crypto-js": "^4.1.1",
+    "file-saver": "^2.0.5",
+    "lodash": "^4.17.21",
+    "vuetify": "^3.0.0-beta.11",
+    "xlsx": "^0.18.5"
+  }
+}
