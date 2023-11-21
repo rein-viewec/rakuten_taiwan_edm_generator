@@ -15,6 +15,7 @@ watch(theme.global, (val) => {
   data.backgroundColor = val.current.colors.inorganicSecondary
 })
 const { created, darkTheme, backgroundColor } = toRefs(data)
+// Master only
 </script>
 
 <template>
