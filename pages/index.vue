@@ -176,7 +176,7 @@ const methods = {
             >
               <img
                 src="${w.product_image_link}"
-                width="320"
+                width="316.7"
                 height="320"
               />
             </a>
