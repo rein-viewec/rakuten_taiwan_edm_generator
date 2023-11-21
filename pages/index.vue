@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import axios from 'axios'
-import { useCustomerStore } from '~/stores/customer'
+// import { useCustomerStore } from '~/stores/customer'
 import crypto from 'crypto-js'
 import FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
-const store = useCustomerStore()
+// const store = useCustomerStore()
 const config = useRuntimeConfig()
 
 const data = reactive({
@@ -146,30 +145,67 @@ const methods = {
     XLSX.utils.book_append_sheet(workBook, sheet1, 'sheet1')
     XLSX.writeFile(workBook, '格式範本' + '.xlsx')
   },
-  generatorFile() {
+  generateFile() {
     const wb = toRaw(data.workbook)
     if (!wb) return
-    console.warn('workbook', wb)
+    let tr = ''
+    let td = ''
+    let td_last = ''
     wb.forEach((w, index) => {
-      console.warn('forEach', wb[index].top_banner)
-    })
-    // const topBanner = Object.keys(wb[0])
-    // console.warn('top_banner', topBanner)
-    const td = `
-      <td colspan="1">
-        <a
-          target="_blank"
-          href="https://www.rakuten.com.tw/shop/rselect/product/R24-kobe-beauty-labo-main-salo6/"
-        >
-          <img
-            src="https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Nov1_EDM/01.jpg"
-            width="314"
-            height="317"
-          />
-        </a>
-      </td>
+      if (index === 0) {
+        tr += ` 
+          <tr>
+            <td colspan="3" style="max-width: 100%;">
+              <a href="#">
+                <img
+                  src="${w.top_banner}"
+                  width="950"
+                  height="auto"
+                />
+              </a>
+            </td>
+          </tr>
+        `
+      }
+      let productIndex = (index += 1)
+      td += `
+        <td colspan="1" style="max-width: 100%;">
+            <a
+              target="_blank"
+              href="${w.product_url}"
+            >
+              <img
+                src="${w.product_image_link}"
+                width="320"
+                height="320"
+              />
+            </a>
+        </td>
       `
-    const trContent = ''
+      if (productIndex % 3 === 0) {
+        tr += ` <tr>
+          ${td}
+        </tr>`
+        td = ''
+      }
+      if (productIndex > 9) {
+        td_last += `
+          <td colspan="1" style="max-width: 100%;">
+              <a
+                target="_blank"
+                href="${w.product_url}"
+              >
+                <img
+                  src="${w.product_image_link}"
+                  width="${wb.length === 11 ? 475 : 321 }"
+                  height="320"
+                />
+              </a>
+              </a>
+          </td>
+        `
+      }
+    })
     const fileContent = `
       <table
           id="___01"
@@ -179,13 +215,25 @@ const methods = {
           cellpadding="0"
           cellspacing="0"
         >
-        ${td}
+        ${tr}
+      </table>
+      <table
+          id="___01"
+          width="950"
+          height="auto"
+          border="0"
+          cellpadding="0"
+          cellspacing="0"
+        >
+        <tr>
+          ${td_last}
+        </tr>
       </table>
     `
     return fileContent
   },
   exportResult() {
-    const content = generatorFile()
+    const content = generateFile()
     const blob = new Blob([content], {
       type: 'text/html',
     })
@@ -208,7 +256,7 @@ const {
   uploadItems,
   readXLSX,
   exportTemplate,
-  generatorFile,
+  generateFile,
   exportResult,
   saveFile,
 } = methods
@@ -220,7 +268,7 @@ watch(inputValue, (val) => {
   data.disabled = true
 })
 useMeta({
-  title: 'Wiser X ViewEC 現有客戶查詢',
+  title: 'Rakuten Taiwan Event EDM Generator',
 })
 onMounted(async () => {
   data.isSearched = false
@@ -265,7 +313,7 @@ onMounted(async () => {
       <v-row justify="center" align="center" class="py-12">
         <v-col cols="12" sm="8">
           <div v-show="isUpload" class="text-center">
-            <div v-html="generatorFile()"></div>
+            <div v-html="generateFile()"></div>
           </div>
         </v-col>
 
