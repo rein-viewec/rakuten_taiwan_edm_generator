@@ -44,7 +44,9 @@ export default defineEventHandler(async (event) => {
     return newItems
   }
   const searchCustomer = (email) => {
-    const itemsData = customerList
+    const itemsData = [{
+      email: 'admin@mail.tw'
+    }]
     const key = config.cryptoSecret
     const customers = JSON.parse(decrypt(itemsData, key))
     const result = formateData(customers).find((c) => {
