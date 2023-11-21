@@ -14,16 +14,11 @@ const data = reactive({
   disabled: true,
   isUpload: false,
   secret: '',
-  rules: {
-    required: (value) => !!value || '此為必填項目.',
-    emailMatch: (value) => !!IsEmail(value) || `請輸入正確的 email 格式`,
-  },
   workbook: [],
   isProcessing: false,
 })
 const {
   show,
-  rules,
   inputValue,
   isUpload,
   isProcessing,
@@ -106,7 +101,7 @@ const methods = {
       reader.onload = (evt) => {
         const data = evt.target.result
         const wb = XLSX.read(data, { type: 'binary' })
-        const sheetName = wb.SheetNames
+        const sheetName = wb.SheetNames[0]
         const sheet = wb.Sheets[sheetName]
         const jsonWB = XLSX.utils.sheet_to_json(sheet)
         resolve(jsonWB)
@@ -117,8 +112,8 @@ const methods = {
     try {
       console.clear()
       data.isUpload = false
+      data.workbook = []
       const uploadFile = file.target.files[0]
-      console.warn('upload', uploadFile)
       const jsonWB = await readXLSX(uploadFile)
       if (!Array.isArray(jsonWB)) return console.warn(jsonWB)
       // jsonWB.splice(0, 1)
@@ -197,7 +192,7 @@ const methods = {
               >
                 <img
                   src="${w.product_image_link}"
-                  width="${wb.length === 11 ? 475 : 321 }"
+                  width="${wb.length === 11 ? 475 : 321}"
                   height="320"
                 />
               </a>
@@ -235,16 +230,9 @@ const methods = {
   exportResult() {
     const content = generateFile()
     const blob = new Blob([content], {
-      type: 'text/html',
-    })
-    FileSaver.saveAs(blob, 'edm.html')
-  },
-  saveFile() {
-    const blob = new Blob(['Hello, world!'], {
       type: 'text/plain;charset=utf-8',
     })
-    let file = new Blob(['test'], { type: 'text/plain;charset=utf-8' })
-    saveAs(blob, 'test.txt')
+    FileSaver.saveAs(blob, 'edm.html')
   },
 }
 const {
@@ -258,7 +246,6 @@ const {
   exportTemplate,
   generateFile,
   exportResult,
-  saveFile,
 } = methods
 watch(inputValue, (val) => {
   if (IsEmail(val)) {
@@ -306,13 +293,13 @@ onMounted(async () => {
             block
             @click="exportTemplate"
           >
-            下載檔案範本
+            下載格式範本
           </v-btn>
         </v-col>
       </v-row>
-      <v-row justify="center" align="center" class="py-12">
-        <v-col cols="12" sm="8">
-          <div v-show="isUpload" class="text-center">
+      <v-row justify="center" align="center" class="py-12 text-center">
+        <v-col cols="12" sm="8" class="text-center">
+          <div v-show="isUpload" class="d-flex justify-center">
             <div v-html="generateFile()"></div>
           </div>
         </v-col>
@@ -328,7 +315,7 @@ onMounted(async () => {
                 size="large"
                 @click="exportResult"
               >
-                下載檔案範本
+                下載EDM
               </v-btn>
             </div>
           </div>

@@ -47,6 +47,9 @@ const { logOut, setUserInfo, getUser, toggleTheme, setTheme } = methods
 const isRail = computed(() => {
   return data.rail ? 'mdi-chevron-right' : 'mdi-chevron-left'
 })
+const themeIcon = computed(() =>
+  data.darkTheme ? 'mdi-brightness-2' : 'mdi-white-balance-sunny',
+)
 onMounted(() => {
   setTheme()
 })
@@ -99,7 +102,7 @@ onMounted(() => {
       <template #append>
         <v-divider></v-divider>
         <v-list dense>
-          <v-list-item prepend-icon="mdi-theme-light-dark">
+          <v-list-item :prepend-icon="themeIcon">
             <v-list-item-title>
               <v-switch
                 v-model="darkTheme"
@@ -119,3 +122,8 @@ onMounted(() => {
     </v-navigation-drawer>
   </div>
 </template>
+
+<style lang="sass">
+.mdi-brightness-2
+  transform: rotate(45deg)
+</style>
