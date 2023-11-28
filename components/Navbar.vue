@@ -6,10 +6,20 @@ const data = reactive({
   rail: true,
   darkTheme: true,
   links: [
+    // {
+    //   title: 'Welcome Rakuten Taiwan Widget',
+    //   to: '/',
+    //   icon: 'mdi-robot',
+    // },
     {
-      title: 'Generator 1.0',
-      to: '/',
-      icon: 'mdi-robot',
+      title: 'Event EDM Generator 1.0',
+      to: '/generator/edm',
+      icon: 'mdi-image-album',
+    },
+    {
+      title: 'Track URL Generator 1.0',
+      to: '/generator/track-url',
+      icon: 'mdi-link-variant-plus',
     },
   ],
   userOptions: [],
@@ -65,7 +75,9 @@ onMounted(() => {
         @click.stop="drawer = !drawer"
       ></v-app-bar-nav-icon>
       <nuxt-link to="/">
-        <v-toolbar-title>Rakuten Taiwan Event EDM Generator</v-toolbar-title>
+        <v-toolbar-title>
+          Rakuten Taiwan Widget
+        </v-toolbar-title>
       </nuxt-link>
       <v-spacer></v-spacer>
       <!-- <div>
@@ -96,7 +108,7 @@ onMounted(() => {
           active-color="primary"
           :prepend-icon="link.icon"
         >
-          <v-list-item-title>{{ link.title }}</v-list-item-title>
+          <v-list-item-title class="text-caption">{{ link.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
       <template #append>
