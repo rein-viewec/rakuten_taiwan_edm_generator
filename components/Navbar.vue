@@ -105,7 +105,7 @@ onMounted(() => {
           v-for="(link, i) in links"
           :key="i"
           :to="link.to"
-          active-color="primary"
+          color="primary"
           :prepend-icon="link.icon"
         >
           <v-list-item-title class="text-caption">{{ link.title }}</v-list-item-title>

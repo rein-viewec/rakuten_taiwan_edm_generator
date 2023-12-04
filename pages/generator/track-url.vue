@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import crypto from 'crypto-js'
 const config = useRuntimeConfig()
-
+const router = useRouter()
+import { compareAsc, format } from 'date-fns'
 const data = reactive({
-  show: true,
+  isMenuOpen: false,
+  show: false,
   inputUrl: '',
+  eventStartDate: new Date(),
+  trackUrl: [
+    '?scid=fbsp-oso_',
+    '_&utm_source=facebook&utm_medium=ppl_oso&utm_campaign=&utm_content=',
+  ],
   selectSite: {
     name: 'R-Select',
     value: 'rselect',
@@ -21,7 +28,15 @@ const data = reactive({
   ],
   isProcessing: false,
 })
-const { show, inputUrl, sites, selectSite } = toRefs(data)
+const {
+  show,
+  inputUrl,
+  sites,
+  selectSite,
+  eventStartDate,
+  isMenuOpen,
+  trackUrl,
+} = toRefs(data)
 
 const methods = {
   readUrl: (ctx, key) => {
@@ -29,15 +44,39 @@ const methods = {
     console.warn('inputUrl', data.inputUrl)
     return 'site'
   },
+  createShortenLink: async () => {
+    const endPoint = 'https://api.reurl.cc/shorten'
+    try {
+      const payload = combineUrl
+      console.warn(payload)
+    } catch (error) {
+      console.warn(error)
+    }
+  },
 }
+const displayInputUrl = computed(() =>
+  data.inputUrl !== '' ? data.inputUrl : '請輸入追蹤網址',
+)
+
+const combineUrl = computed(() => {
+  const datetime = format(data.eventStartDate, 'yyMMdd')
+  const combine =
+    data.inputUrl +
+    data.trackUrl[0] +
+    data.selectSite.value +
+    data.trackUrl[1] +
+    datetime
+  return combine
+})
+const formatDate = computed(() => {
+  const datetime = format(data.eventStartDate, 'yyyy-MM-dd')
+  return datetime
+})
 const { readUrl } = methods
 watch(inputUrl, (val) => {
-  // if (IsEmail(val)) {
-  //   data.disabled = false
-  //   return
-  // }
-  console.warn('inputUrl', val)
+  if (router.currentRoute.value.name !== 'generator-track-url') return
 })
+
 useMeta({
   title: 'Rakuten Taiwan Widget - Track Url Generator',
 })
@@ -50,31 +89,90 @@ onMounted(async () => {})
       <v-row align="center" class="pt-6">
         <v-col cols="12">
           <div class="headline">
-            請依照格式上傳檔案，輸出結果將會顯示在下方，可以直接下載
+            輸入希望追蹤的網址，並按下產生，來產生追蹤短網址
           </div>
         </v-col>
       </v-row>
-      <v-row justify="center" align="center" class="py-6">
-        <v-col cols="12" sm="5">
-          <v-text-field
-            v-model="inputUrl"
-            label="輸入分析網址"
-            variant="outlined"
-            hide-details
-            prepend-icon="mdi-file"
-          ></v-text-field>
+      <v-row align="center" class="py-6">
+        <v-col cols="12" sm="8">
+          <client-only>
+            <v-tooltip location="bottom">
+              <template #activator="{ props }">
+                <v-text-field
+                  v-model="inputUrl"
+                  label="輸入追蹤網址"
+                  variant="outlined"
+                  color="success"
+                  hide-details
+                  prepend-inner-icon="mdi-link-variant-plus"
+                  v-bind="props"
+                ></v-text-field>
+              </template>
+              <div class="text-subtitle-1">
+                {{ displayInputUrl }}
+              </div>
+            </v-tooltip>
+          </client-only>
         </v-col>
-        <v-col cols="12" sm="3">
+        <v-col cols="12" sm="2">
           <v-select
             v-model="selectSite"
             label="Select"
             variant="outlined"
             item-title="name"
             item-value="value"
+            color="success"
             return-object
             hide-details
             :items="sites"
           ></v-select>
+        </v-col>
+        <v-col cols="12" sm="2">
+          <client-only>
+            <v-menu v-model="isMenuOpen">
+              <template #activator="{ props }">
+                <v-text-field
+                  label="活動開跑日期"
+                  :model-value="formatDate"
+                  readonly
+                  variant="outlined"
+                  v-bind="props"
+                  color="success"
+                  hide-details
+                ></v-text-field>
+              </template>
+              <v-locale-provider locale="zh">
+                <v-date-picker
+                  v-model="eventStartDate"
+                  title="活動開跑日期"
+                  elevation="2"
+                  color="primary"
+                ></v-date-picker>
+              </v-locale-provider>
+            </v-menu>
+          </client-only>
+        </v-col>
+      </v-row>
+      <v-row align="center" class="py-4">
+        <v-col cols="12" sm="12">
+          <client-only>
+            <v-tooltip location="bottom">
+              <template #activator="{ props }">
+                <v-text-field
+                  v-model="combineUrl"
+                  readonly
+                  label="產生的網址"
+                  variant="outlined"
+                  hide-details
+                  prepend-inner-icon="mdi-link-variant"
+                  v-bind="props"
+                ></v-text-field>
+              </template>
+              <div class="text-subtitle-1">
+                {{ combineUrl }}
+              </div>
+            </v-tooltip>
+          </client-only>
         </v-col>
       </v-row>
     </v-card>
