@@ -26,6 +26,15 @@ const data = reactive({
       value: 'vvvshop',
     },
   ],
+  isValidUrl: [
+    (value) => {
+      const Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/
+      const objExp = new RegExp(Expression)
+      return objExp.test(value) == true || value === ''
+        ? true
+        : '請輸入正確格式的網址.'
+    },
+  ],
   isProcessing: false,
 })
 const {
@@ -36,6 +45,8 @@ const {
   eventStartDate,
   isMenuOpen,
   trackUrl,
+  isValidUrl,
+  isProcessing,
 } = toRefs(data)
 
 const methods = {
@@ -45,34 +56,47 @@ const methods = {
     return 'site'
   },
   createShortenLink: async () => {
-    const endPoint = 'https://api.reurl.cc/shorten'
     try {
-      const payload = combineUrl
-      console.warn(payload)
+      data.isProcessing = true
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${config.token}`,
+        },
+        params: {
+          link: combineUrl.value,
+        },
+      }
+      const res = await $fetch('/api/shorten', options)
+      if (res.statusCode !== 200) return
     } catch (error) {
       console.warn(error)
+    } finally {
+      data.isProcessing = false
     }
   },
 }
+
+const { readUrl, createShortenLink } = methods
 const displayInputUrl = computed(() =>
   data.inputUrl !== '' ? data.inputUrl : '請輸入追蹤網址',
 )
 
 const combineUrl = computed(() => {
   const datetime = format(data.eventStartDate, 'yyMMdd')
-  const combine =
+  const combineResult =
     data.inputUrl +
     data.trackUrl[0] +
     data.selectSite.value +
     data.trackUrl[1] +
     datetime
-  return combine
+  return combineResult
 })
 const formatDate = computed(() => {
   const datetime = format(data.eventStartDate, 'yyyy-MM-dd')
   return datetime
 })
-const { readUrl } = methods
 watch(inputUrl, (val) => {
   if (router.currentRoute.value.name !== 'generator-track-url') return
 })
@@ -103,7 +127,7 @@ onMounted(async () => {})
                   label="輸入追蹤網址"
                   variant="outlined"
                   color="success"
-                  hide-details
+                  :rules="isValidUrl"
                   prepend-inner-icon="mdi-link-variant-plus"
                   v-bind="props"
                 ></v-text-field>
@@ -123,7 +147,6 @@ onMounted(async () => {})
             item-value="value"
             color="success"
             return-object
-            hide-details
             :items="sites"
           ></v-select>
         </v-col>
@@ -138,7 +161,6 @@ onMounted(async () => {})
                   variant="outlined"
                   v-bind="props"
                   color="success"
-                  hide-details
                 ></v-text-field>
               </template>
               <v-locale-provider locale="zh">
@@ -153,7 +175,7 @@ onMounted(async () => {})
           </client-only>
         </v-col>
       </v-row>
-      <v-row align="center" class="py-4">
+      <v-row align="center">
         <v-col cols="12" sm="12">
           <client-only>
             <v-tooltip location="bottom">
@@ -173,6 +195,18 @@ onMounted(async () => {})
               </div>
             </v-tooltip>
           </client-only>
+        </v-col>
+
+        <v-col cols="12" sm="12">
+          <v-btn
+            prepend-icon="mdi-download"
+            color="primary"
+            :loading="isProcessing"
+            block
+            @click="createShortenLink"
+          >
+            產生短網址
+          </v-btn>
         </v-col>
       </v-row>
     </v-card>
