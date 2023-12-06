@@ -6,7 +6,9 @@ import { compareAsc, format } from 'date-fns'
 const data = reactive({
   isMenuOpen: false,
   show: false,
+  isCopied: false,
   inputUrl: '',
+  outputUrl: '',
   eventStartDate: new Date(),
   trackUrl: [
     '?scid=fbsp-oso_',
@@ -38,21 +40,20 @@ const data = reactive({
   isProcessing: false,
 })
 const {
-  show,
   inputUrl,
+  outputUrl,
   sites,
   selectSite,
   eventStartDate,
   isMenuOpen,
   trackUrl,
+  isCopied,
   isValidUrl,
   isProcessing,
 } = toRefs(data)
 
 const methods = {
   readUrl: (ctx, key) => {
-    console.warn('selectSite', data.selectSite)
-    console.warn('inputUrl', data.inputUrl)
     return 'site'
   },
   createShortenLink: async () => {
@@ -69,17 +70,21 @@ const methods = {
         },
       }
       const res = await $fetch('/api/shorten', options)
-      console.warn('createShortenLink', res)
       if (res.statusCode !== 200) return
+      console.warn('createShortenLink', res)
+      outputUrl.value = res.result.short_url
     } catch (error) {
       console.warn(error)
     } finally {
       data.isProcessing = false
     }
   },
+  copyUrl: async () => {
+    console.warn('copy')
+  },
 }
 
-const { readUrl, createShortenLink } = methods
+const { readUrl, createShortenLink, copyUrl } = methods
 const displayInputUrl = computed(() =>
   data.inputUrl !== '' ? data.inputUrl : '請輸入追蹤網址',
 )
@@ -198,15 +203,54 @@ onMounted(async () => {})
           </client-only>
         </v-col>
 
-        <v-col cols="12" sm="12">
+        <v-col cols="12" sm="12" class="my-6">
           <v-btn
-            prepend-icon="mdi-download"
+            prepend-icon="mdi-link-variant-plus"
             color="primary"
             :loading="isProcessing"
             block
+            size="x-large"
             @click="createShortenLink"
           >
             產生短網址
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row justify="center" class="mb-6">
+        <v-col cols="12" sm="9">
+          <client-only>
+            <v-tooltip location="bottom">
+              <template #activator="{ props }">
+                <v-text-field
+                  v-model="outputUrl"
+                  readonly
+                  label="產生的網址"
+                  variant="outlined"
+                  hide-details
+                  prepend-inner-icon="mdi-link-variant"
+                  :append-inner-icon="
+                    isCopied ? 'mdi-emoticon-happy' : 'mdi-emoticon-neutral'
+                  "
+                  v-bind="props"
+                ></v-text-field>
+              </template>
+              <div class="text-subtitle-1">
+                {{ combineUrl }}
+              </div>
+            </v-tooltip>
+          </client-only>
+        </v-col>
+        <v-col cols="12" sm="3">
+          <v-btn
+            prepend-icon="mdi-link-variant-plus"
+            color="secondary"
+            class="white-text"
+            :loading="isProcessing"
+            block
+            size="x-large"
+            @click="copyUrl"
+          >
+            複製短網址
           </v-btn>
         </v-col>
       </v-row>
