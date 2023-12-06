@@ -64,11 +64,12 @@ const methods = {
           'Content-Type': 'application/json',
           authorization: `Bearer ${config.token}`,
         },
-        params: {
-          link: combineUrl.value,
+        body: {
+          url: combineUrl.value,
         },
       }
       const res = await $fetch('/api/shorten', options)
+      console.warn('createShortenLink', res)
       if (res.statusCode !== 200) return
     } catch (error) {
       console.warn(error)
