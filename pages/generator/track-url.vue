@@ -83,15 +83,15 @@ const methods = {
         },
       }
       const res = await $fetch('/api/shorten', options)
-      if (res.statusCode !== 200)
-        return sendMessage(
-          '產生短網址失敗，請留意輸入的網址是否為合法的網址，或當前短網址伺服器不穩，請稍後再次嘗試',
-          'error',
-        )
       const result: any = res.result
       outputUrl.value = result.short_url
-      sendMessage('成功產生短網址', null)
+      sendMessage('成功產生短網址', null, null)
     } catch (error) {
+      sendMessage(
+        '產生短網址失敗，請留意輸入的網址是否為合法的網址，或當前短網址伺服器不穩，請稍後再次嘗試',
+        'error',
+        10000,
+      )
       console.warn(error)
     } finally {
       data.isProcessing = false
@@ -100,12 +100,13 @@ const methods = {
   copyUrl: async () => {
     copy(outputUrl.value)
     isCopied.value = true
-    sendMessage('成功複製短網址至剪貼簿', null)
+    sendMessage('成功複製短網址至剪貼簿', null, null)
   },
-  sendMessage(message, type) {
+  sendMessage(message, type, timeout: number) {
     snackbar.value.show = true
     snackbar.value.message = message ? message : '操作成功'
     snackbar.value.type = type ? type : 'success'
+    snackbar.value.timeout = timeout ? timeout : 5000
   },
 }
 
