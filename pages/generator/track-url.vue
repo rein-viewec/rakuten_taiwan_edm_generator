@@ -143,142 +143,147 @@ onMounted(() => {
 
 <template>
   <v-container fluid>
-    <v-card class="pa-6">
-      <v-row align="center" class="pt-6">
-        <v-col cols="12">
-          <div class="headline">
-            輸入希望追蹤的網址，並按下產生，來產生追蹤短網址
-          </div>
-        </v-col>
-      </v-row>
-      <v-row align="center" class="py-6">
-        <v-col cols="12" sm="8">
-          <client-only>
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <v-text-field
-                  v-model="inputUrl"
-                  label="輸入追蹤網址"
-                  variant="outlined"
-                  color="success"
-                  :rules="isValidUrl"
-                  prepend-inner-icon="mdi-link-variant-plus"
-                  v-bind="props"
-                ></v-text-field>
-              </template>
-              <div class="text-subtitle-1">
-                {{ displayInputUrl }}
+    <v-row justify="center">
+      <v-col cols="12" sm="12" md="10" lg="8" xl="6">
+        <v-card class="pa-6 pt-10">
+          <v-row align="center" class="pt-6">
+            <v-col cols="12">
+              <div class="headline">
+                輸入希望追蹤的網址，並按下產生，來產生追蹤短網址
               </div>
-            </v-tooltip>
-          </client-only>
-        </v-col>
-        <v-col cols="12" sm="2">
-          <v-select
-            v-model="selectSite"
-            label="Select"
-            variant="outlined"
-            item-title="name"
-            item-value="value"
-            color="success"
-            return-object
-            :items="sites"
-          ></v-select>
-        </v-col>
-        <v-col cols="12" sm="2">
-          <client-only>
-            <v-menu v-model="isMenuOpen">
-              <template #activator="{ props }">
+            </v-col>
+          </v-row>
+          <v-row align="start" class="pt-6">
+            <v-col cols="12" sm="12" md="12" lg="6" xl="8" class="pb-6">
+              <client-only>
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-text-field
+                      v-model="inputUrl"
+                      label="輸入追蹤網址"
+                      variant="outlined"
+                      color="success"
+                      :rules="isValidUrl"
+                      prepend-inner-icon="mdi-link-variant-plus"
+                      v-bind="props"
+                    ></v-text-field>
+                  </template>
+                  <div class="text-subtitle-1">
+                    {{ displayInputUrl }}
+                  </div>
+                </v-tooltip>
+              </client-only>
+            </v-col>
+            <v-col cols="6" sm="6" md="6" lg="3" xl="2">
+              <v-select
+                v-model="selectSite"
+                label="Select"
+                variant="outlined"
+                item-title="name"
+                item-value="value"
+                color="success"
+                return-object
+                :items="sites"
+              ></v-select>
+            </v-col>
+            <v-col cols="6" sm="6" md="6" lg="3" xl="2">
+              <client-only>
+                <v-menu v-model="isMenuOpen">
+                  <template #activator="{ props }">
+                    <v-text-field
+                      label="活動開跑日期"
+                      :model-value="formatDate"
+                      readonly
+                      variant="outlined"
+                      v-bind="props"
+                      color="success"
+                    ></v-text-field>
+                  </template>
+                  <v-locale-provider locale="zh">
+                    <v-date-picker
+                      v-model="eventStartDate"
+                      title="活動開跑日期"
+                      elevation="2"
+                      color="primary"
+                    ></v-date-picker>
+                  </v-locale-provider>
+                </v-menu>
+              </client-only>
+            </v-col>
+          </v-row>
+          <v-row align="center">
+            <v-col cols="12" sm="12">
+              <client-only>
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-text-field
+                      v-model="combineUrl"
+                      readonly
+                      label="產生的追蹤網址"
+                      variant="outlined"
+                      hide-details
+                      prepend-inner-icon="mdi-link-variant"
+                      v-bind="props"
+                    ></v-text-field>
+                  </template>
+                  <div class="text-subtitle-1">
+                    {{ combineUrl }}
+                  </div>
+                </v-tooltip>
+              </client-only>
+            </v-col>
+          </v-row>
+          <v-row justify="center" class="mt-12 my-6">
+            <v-col cols="12" sm="12" class="mt-6">
+              <v-btn
+                prepend-icon="mdi-link-variant-plus"
+                color="primary"
+                :loading="isProcessing"
+                block
+                size="x-large"
+                @click="createShortenLink"
+              >
+                開始產生短網址
+              </v-btn>
+            </v-col>
+            <v-col cols="12" sm="9">
+              <client-only>
                 <v-text-field
-                  label="活動開跑日期"
-                  :model-value="formatDate"
+                  v-model="outputUrl"
                   readonly
-                  variant="outlined"
-                  v-bind="props"
-                  color="success"
-                ></v-text-field>
-              </template>
-              <v-locale-provider locale="zh">
-                <v-date-picker
-                  v-model="eventStartDate"
-                  title="活動開跑日期"
-                  elevation="2"
-                  color="primary"
-                ></v-date-picker>
-              </v-locale-provider>
-            </v-menu>
-          </client-only>
-        </v-col>
-      </v-row>
-      <v-row align="center">
-        <v-col cols="12" sm="12">
-          <client-only>
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <v-text-field
-                  v-model="combineUrl"
-                  readonly
-                  label="產生的追蹤的網址"
+                  label="產生的短網址"
                   variant="outlined"
                   hide-details
                   prepend-inner-icon="mdi-link-variant"
-                  v-bind="props"
+                  :append-inner-icon="
+                    isCopied ? 'mdi-emoticon-happy' : 'mdi-emoticon-neutral'
+                  "
                 ></v-text-field>
-              </template>
-              <div class="text-subtitle-1">
-                {{ combineUrl }}
-              </div>
-            </v-tooltip>
-          </client-only>
-        </v-col>
+              </client-only>
+            </v-col>
+            <v-col cols="12" sm="3">
+              <v-btn
+                prepend-icon="mdi-clipboard-plus-outline"
+                color="secondary"
+                class="white-text"
+                :loading="isProcessing"
+                block
+                size="x-large"
+                @click="copyUrl"
+              >
+                複製短網址
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
 
-        <v-col cols="12" sm="12" class="my-6">
-          <v-btn
-            prepend-icon="mdi-link-variant-plus"
-            color="primary"
-            :loading="isProcessing"
-            block
-            size="x-large"
-            @click="createShortenLink"
-          >
-            產生短網址
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row justify="center" class="mb-6">
-        <v-col cols="12" sm="9">
-          <client-only>
-            <v-text-field
-              v-model="outputUrl"
-              readonly
-              label="產生短網址"
-              variant="outlined"
-              hide-details
-              prepend-inner-icon="mdi-link-variant"
-              :append-inner-icon="
-                isCopied ? 'mdi-emoticon-happy' : 'mdi-emoticon-neutral'
-              "
-            ></v-text-field>
-          </client-only>
-        </v-col>
-        <v-col cols="12" sm="3">
-          <v-btn
-            prepend-icon="mdi-link-variant-plus"
-            color="secondary"
-            class="white-text"
-            :loading="isProcessing"
-            block
-            size="x-large"
-            @click="copyUrl"
-          >
-            複製短網址
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-card>
     <v-snackbar
       v-model="snackbar.show"
       :timeout="snackbar.timeout"
       :color="snackbar.type"
+      class="mb-9"
     >
       <div class="text-h6">
         {{ snackbar.message }}

@@ -21,13 +21,13 @@ const dark: ThemeDefinition = {
     inorganicSecondary: '#2c2c2c',
     textGray: '#ffffff',
     surface: '#383838',
-    primary: '#d34b52',
+    primary: '#d0454c',
     'primary-darken-1': '#3700B3',
     secondary: '#2eb871',
     'secondary-darken-1': '#018786',
     error: '#B00020',
     info: '#2196F3',
-    success: '#4caf6b',
+    success: '#2eb871',
     warning: '#FB8C00',
   }
 }
@@ -39,13 +39,13 @@ const light: ThemeDefinition = {
     inorganicSecondary: '#ececec',
     textGray: '#727272',
     surface: '#FFFFFF',
-    primary: '#d34b52',
+    primary: '#cd595f',
     'primary-darken-1': '#3700B3',
     secondary: '#2eb871',
     'secondary-darken-1': '#018786',
     error: '#B00020',
     info: '#2196F3',
-    success: '#4CAF50',
+    success: '#2eb871',
     warning: '#FB8C00',
   }
 }
