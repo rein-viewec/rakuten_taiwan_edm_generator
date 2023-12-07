@@ -30,7 +30,7 @@ const { created, darkTheme, backgroundColor } = toRefs(data)
     <v-main :style="{ 'background-color': backgroundColor }">
       <v-parallax src="/images/bg.jpg" :class="{ 'hide-bg': !background }">
         <v-container fluid>
-          <router-view class="pa-4"></router-view>
+          <router-view class="pa-4 primary"></router-view>
         </v-container>
       </v-parallax>
     </v-main>
@@ -44,9 +44,9 @@ const { created, darkTheme, backgroundColor } = toRefs(data)
     .v-img__img
       opacity: 0
   .v-img__img
-    filter: blur(5px) grayscale(10%)
+    filter: blur(12px) grayscale(50%)
     // backdrop-filter: blur(5px)
-    opacity: 0.6
+    opacity: 0.8
     // opacity: .8
 .pointer
   cursor: pointer
