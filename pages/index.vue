@@ -23,7 +23,7 @@ onMounted(() => {
   <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" sm="12" md="10" lg="8" xl="6">
-        <v-card class="pa-12 elevation-12">
+        <v-card class="pa-12 elevation-12 main__card">
           <v-row align="center">
             <v-col cols="12">
               <div class="text-h5 Font-weight-bold my-2">
@@ -77,6 +77,10 @@ onMounted(() => {
 </template>
 
 <style scoped lang="sass">
+// .main__card
+//   background-color: #ffffffbb
+//   &.v-theme--dark
+//     background-color: #333333cc
 .min__height
   min-height: 24px
 .delete__todo
