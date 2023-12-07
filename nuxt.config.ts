@@ -12,11 +12,13 @@ export default defineNuxtConfig({
         baseURL: process.env.API_BASE_URL
     },
     runtimeConfig: {
-        cryptoSecret: process.env.crypto_secret_key,
+        reurl_secret_key: process.env.reurl_secret_key,
+        reurl_api_url: process.env.reurl_api_url,
+        secret_token: process.env.secret_token,
         public: {
-            JGUrl: process.env.JG_URL,
-            JGToken: process.env.JG_TOKEN,
-            // token: process.env.token
+            // JGUrl: process.env.JG_URL,
+            // JGToken: process.env.JG_TOKEN,
+            token: process.env.token,
         },
     },
     vite: {

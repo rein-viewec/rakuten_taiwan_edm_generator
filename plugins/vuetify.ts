@@ -10,6 +10,9 @@ import colors from 'vuetify/lib/util/colors.mjs'
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import DateFnsAdapter from '@date-io/date-fns'
+import enUS from 'date-fns/locale/en-US'
+import zhHant from 'date-fns/locale/zh-TW'
 
 const dark: ThemeDefinition = {
   dark: true,
@@ -20,11 +23,11 @@ const dark: ThemeDefinition = {
     surface: '#383838',
     primary: '#d34b52',
     'primary-darken-1': '#3700B3',
-    secondary: '#03DAC6',
+    secondary: '#2eb871',
     'secondary-darken-1': '#018786',
     error: '#B00020',
     info: '#2196F3',
-    success: '#4CAF50',
+    success: '#4caf6b',
     warning: '#FB8C00',
   }
 }
@@ -38,7 +41,7 @@ const light: ThemeDefinition = {
     surface: '#FFFFFF',
     primary: '#d34b52',
     'primary-darken-1': '#3700B3',
-    secondary: '#03DAC6',
+    secondary: '#2eb871',
     'secondary-darken-1': '#018786',
     error: '#B00020',
     info: '#2196F3',
@@ -51,6 +54,13 @@ export default defineNuxtPlugin(nuxtApp => {
   const vuetify = createVuetify({
     components,
     directives,
+    date: {
+      adapter: DateFnsAdapter,
+      locale: {
+        en: enUS,
+        zh: zhHant
+      },
+    },
     theme: {
       defaultTheme: 'dark',
       themes: {
