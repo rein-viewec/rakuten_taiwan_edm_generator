@@ -1,30 +1,15 @@
 <script setup lang="ts">
 import { useTheme } from 'vuetify'
 const theme = useTheme()
+const router = useRouter()
+import { useConfigStore, Link } from '~/stores/config'
+const configStore = useConfigStore()
+
 const data = reactive({
   drawer: true,
   rail: true,
   darkTheme: true,
-  links: [
-    {
-      title: 'RSelect Widgets 首頁',
-      to: '/',
-      icon: 'mdi-robot',
-    },
-    {
-      title: 'Event EDM 產生工具',
-      to: '/generator/edm',
-      icon: 'mdi-tooltip-image',
-      description:
-        '依照格式上傳檔案後可以依照上傳的圖片或商品連結，產生可以直接下載的 EDM',
-    },
-    {
-      title: '追蹤短網址產生工具',
-      to: '/generator/track-url',
-      icon: 'mdi-file-link',
-      description: '輸入希望追蹤的網址，來產生追蹤網址或是短網址',
-    },
-  ],
+  links: [],
   userOptions: [],
   isProcessing: false,
 })
@@ -32,13 +17,6 @@ const { drawer, rail, links, userOptions, darkTheme, isProcessing } = toRefs(
   data,
 )
 const methods = {
-  logOut: () => {
-    console.log('log out success')
-  },
-  setUserInfo: (info) => {},
-  getUser: async () => {
-    const payload = 'token'
-  },
   toggleTheme() {
     theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
     data.darkTheme = theme.global.current.value.dark
@@ -56,7 +34,7 @@ const methods = {
     }
   },
 }
-const { logOut, setUserInfo, getUser, toggleTheme, setTheme } = methods
+const { toggleTheme, setTheme } = methods
 const isRail = computed(() => {
   return data.rail ? 'mdi-chevron-right' : 'mdi-chevron-left'
 })
@@ -64,6 +42,7 @@ const themeIcon = computed(() =>
   data.darkTheme ? 'mdi-brightness-2' : 'mdi-white-balance-sunny',
 )
 onMounted(() => {
+  links.value = configStore.links
   setTheme()
 })
 </script>
@@ -111,7 +90,9 @@ onMounted(() => {
           color="primary"
           :prepend-icon="link.icon"
         >
-          <v-list-item-title class="text-caption">{{ link.title }}</v-list-item-title>
+          <v-list-item-title class="text-caption">
+            {{ link.title }}
+          </v-list-item-title>
         </v-list-item>
       </v-list>
       <template #append>

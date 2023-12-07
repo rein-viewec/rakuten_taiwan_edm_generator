@@ -3,9 +3,11 @@ const config = useRuntimeConfig()
 const router = useRouter()
 import { format } from 'date-fns'
 import { useClipboard, useStorage } from '@vueuse/core'
+import { useConfigStore, Link } from '~/stores/config'
+const configStore = useConfigStore()
+
 const data = reactive({
   isMenuOpen: false,
-
   show: false,
   isCopied: false,
   inputUrl: '',
@@ -45,8 +47,9 @@ const data = reactive({
     message: '',
     type: 'success',
   },
+  currentPageInfo: {} as Link,
 })
-let {
+const {
   inputUrl,
   outputUrl,
   sites,
@@ -58,6 +61,7 @@ let {
   isValidUrl,
   isProcessing,
   snackbar,
+  currentPageInfo,
 } = toRefs(data)
 const { copy } = useClipboard({ outputUrl })
 const state = useStorage('rakuten_taiwan_store', { basic_url: inputUrl })
@@ -131,8 +135,12 @@ watch(inputUrl, (val) => {
   }
 })
 
+const pageInfo = configStore.links.find(
+  (l) => l.to === router.currentRoute.value.path,
+)
+currentPageInfo.value = pageInfo
 useMeta({
-  title: 'Rakuten Taiwan Widget - Track Url Generator',
+  title: currentPageInfo.value.meta,
 })
 onMounted(() => {
   if (state.value.basic_url) {
