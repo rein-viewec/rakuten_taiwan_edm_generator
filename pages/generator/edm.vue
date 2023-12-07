@@ -1,11 +1,11 @@
 <script setup lang="ts">
-// import { useCustomerStore } from '~/stores/customer'
+const router = useRouter()
 import crypto from 'crypto-js'
 import FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
-// const store = useCustomerStore()
+import { useConfigStore, Link } from '~/stores/config'
+const configStore = useConfigStore()
 const config = useRuntimeConfig()
-
 const data = reactive({
   show: true,
   inputValue: '',
@@ -16,6 +16,7 @@ const data = reactive({
   secret: '',
   workbook: [],
   isProcessing: false,
+  currentPageInfo: {} as Link,
 })
 const {
   show,
@@ -27,6 +28,7 @@ const {
   message,
   disabled,
   secret,
+  currentPageInfo,
 } = toRefs(data)
 
 const methods = {
@@ -82,7 +84,8 @@ const methods = {
       const res = await $fetch('/api/search_customer', options)
       data.isSearched = true
       data.isProcessing = false
-      if (res.statusCode !== 200) return
+      const statusCode: any = res
+      if (statusCode !== 200) return
     } catch (error) {
       console.warn(error)
     }
@@ -254,8 +257,13 @@ watch(inputValue, (val) => {
   }
   data.disabled = true
 })
+
+const pageInfo = configStore.links.find(
+  (l) => l.to === router.currentRoute.value.path,
+)
+currentPageInfo.value = pageInfo
 useMeta({
-  title: 'Rakuten Taiwan Widget - Event EDM Generator',
+  title: currentPageInfo.value.meta,
 })
 onMounted(async () => {
   data.isSearched = false
@@ -264,64 +272,69 @@ onMounted(async () => {
 
 <template>
   <v-container fluid>
-    <v-card class="pa-6">
-      <v-row align="center" class="pt-6">
-        <v-col cols="12">
-          <div class="headline">
-            請依照格式上傳檔案，輸出結果將會顯示在下方，可以直接下載
-          </div>
-        </v-col>
-      </v-row>
-      <v-row justify="center" align="center" class="py-6">
-        <v-col cols="12" sm="9">
-          <v-file-input
-            label="選擇要上傳的圖片連結資料"
-            accept="xlsx/*"
-            variant="outlined"
-            clearable
-            hint="請輸入正確格式的 email，確保查詢到的為正確的資料"
-            prepend-icon="mdi-file"
-            hide-details
-            @change="uploadItems"
-          ></v-file-input>
-        </v-col>
-        <v-col cols="12" sm="3">
-          <v-btn
-            prepend-icon="mdi-download"
-            color="primary"
-            :loading="isProcessing"
-            block
-            @click="exportTemplate"
-          >
-            下載格式範本
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row justify="center" align="center" class="py-12 text-center">
-        <v-col cols="12" sm="8" class="text-center">
-          <div v-show="isUpload" class="d-flex justify-center">
-            <div v-html="generateFile()"></div>
-          </div>
-        </v-col>
-
-        <v-col cols="12" sm="8">
-          <div v-show="isUpload" class="text-center">
-            <div class="font-weight-bold my-0">
+    <v-row justify="center">
+      <v-col cols="12" sm="12" md="10" lg="8" xl="6">
+        <v-card class="pa-6">
+          <v-row align="center" class="pt-6">
+            <v-col cols="12">
+              <div class="headline">
+                請依照格式上傳檔案，輸出結果將會顯示在下方，可以直接下載
+              </div>
+            </v-col>
+          </v-row>
+          <v-row justify="center" align="center" class="py-6">
+            <v-col cols="12" sm="9">
+              <v-file-input
+                label="選擇要上傳的圖片連結資料"
+                accept="xlsx/*"
+                variant="outlined"
+                clearable
+                hint="請輸入正確格式的 email，確保查詢到的為正確的資料"
+                prepend-icon="mdi-file"
+                hide-details
+                @change="uploadItems"
+              ></v-file-input>
+            </v-col>
+            <v-col cols="12" sm="3">
               <v-btn
                 prepend-icon="mdi-download"
                 color="primary"
                 :loading="isProcessing"
                 block
                 size="large"
-                @click="exportResult"
+                @click="exportTemplate"
               >
-                下載EDM
+                下載格式範本
               </v-btn>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-    </v-card>
+            </v-col>
+          </v-row>
+          <v-row justify="center" align="center" class="py-12 text-center">
+            <v-col cols="12" sm="8" class="text-center">
+              <div v-show="isUpload" class="d-flex justify-center">
+                <div v-html="generateFile()"></div>
+              </div>
+            </v-col>
+
+            <v-col cols="12" sm="8">
+              <div v-show="isUpload" class="text-center">
+                <div class="font-weight-bold my-0">
+                  <v-btn
+                    prepend-icon="mdi-download"
+                    color="primary"
+                    :loading="isProcessing"
+                    block
+                    size="large"
+                    @click="exportResult"
+                  >
+                    下載EDM
+                  </v-btn>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
