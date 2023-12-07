@@ -2,6 +2,11 @@
 import { defineNuxtConfig } from 'nuxt'
 export default defineNuxtConfig({
     css: ['vuetify/lib/styles/main.sass'],
+    nitro: {
+        externals: {
+            inline: ['date-fns']
+        }
+    },
     build: {
         transpile: ['vuetify'],
     },
