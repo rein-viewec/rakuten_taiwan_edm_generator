@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
   const headers = event.req.headers
   const config = useRuntimeConfig()
   const { url } = await readBody(event)
-  if (headers.authorization !== `Bearer ${config.public.token}`) {
+  if (headers.authorization !== `Bearer ${config.secret_token}`) {
     return sendError(event, createError({
       statusCode: 401,
       statusMessage: 'Access denied!'

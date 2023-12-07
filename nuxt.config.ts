@@ -7,11 +7,7 @@ export default defineNuxtConfig({
     },
     modules: [
         '@pinia/nuxt',
-        'nuxt-clipboard',
     ],
-    clipboard: {
-        autoSetContainer: true
-    },
     axios: {
         baseURL: process.env.API_BASE_URL
     },

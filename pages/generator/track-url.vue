@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import crypto from 'crypto-js'
 const config = useRuntimeConfig()
 const router = useRouter()
-import { compareAsc, format } from 'date-fns'
+import { format } from 'date-fns'
+import { useClipboard, useStorage } from '@vueuse/core'
 const data = reactive({
   isMenuOpen: false,
+
   show: false,
   isCopied: false,
   inputUrl: '',
@@ -38,8 +39,14 @@ const data = reactive({
     },
   ],
   isProcessing: false,
+  snackbar: {
+    show: false,
+    timeout: 5000,
+    message: '',
+    type: 'success',
+  },
 })
-const {
+let {
   inputUrl,
   outputUrl,
   sites,
@@ -50,8 +57,10 @@ const {
   isCopied,
   isValidUrl,
   isProcessing,
+  snackbar,
 } = toRefs(data)
-
+const { copy } = useClipboard({ outputUrl })
+const state = useStorage('rakuten_taiwan_store', { basic_url: inputUrl })
 const methods = {
   readUrl: (ctx, key) => {
     return 'site'
@@ -70,9 +79,14 @@ const methods = {
         },
       }
       const res = await $fetch('/api/shorten', options)
-      if (res.statusCode !== 200) return
-      console.warn('createShortenLink', res)
-      outputUrl.value = res.result.short_url
+      if (res.statusCode !== 200)
+        return sendMessage(
+          '產生短網址失敗，請留意輸入的網址是否為合法的網址，或當前短網址伺服器不穩，請稍後再次嘗試',
+          'error',
+        )
+      const result: any = res.result
+      outputUrl.value = result.short_url
+      sendMessage('成功產生短網址', null)
     } catch (error) {
       console.warn(error)
     } finally {
@@ -80,11 +94,18 @@ const methods = {
     }
   },
   copyUrl: async () => {
-    console.warn('copy')
+    copy(outputUrl.value)
+    isCopied.value = true
+    sendMessage('成功複製短網址至剪貼簿', null)
+  },
+  sendMessage(message, type) {
+    snackbar.value.show = true
+    snackbar.value.message = message ? message : '操作成功'
+    snackbar.value.type = type ? type : 'success'
   },
 }
 
-const { readUrl, createShortenLink, copyUrl } = methods
+const { readUrl, createShortenLink, copyUrl, sendMessage } = methods
 const displayInputUrl = computed(() =>
   data.inputUrl !== '' ? data.inputUrl : '請輸入追蹤網址',
 )
@@ -103,14 +124,21 @@ const formatDate = computed(() => {
   const datetime = format(data.eventStartDate, 'yyyy-MM-dd')
   return datetime
 })
+
 watch(inputUrl, (val) => {
-  if (router.currentRoute.value.name !== 'generator-track-url') return
+  state.value = {
+    basic_url: ref(val),
+  }
 })
 
 useMeta({
   title: 'Rakuten Taiwan Widget - Track Url Generator',
 })
-onMounted(async () => {})
+onMounted(() => {
+  if (state.value.basic_url) {
+    inputUrl.value = JSON.parse(JSON.stringify(state.value.basic_url))
+  }
+})
 </script>
 
 <template>
@@ -189,7 +217,7 @@ onMounted(async () => {})
                 <v-text-field
                   v-model="combineUrl"
                   readonly
-                  label="產生的網址"
+                  label="產生的追蹤的網址"
                   variant="outlined"
                   hide-details
                   prepend-inner-icon="mdi-link-variant"
@@ -219,25 +247,17 @@ onMounted(async () => {})
       <v-row justify="center" class="mb-6">
         <v-col cols="12" sm="9">
           <client-only>
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <v-text-field
-                  v-model="outputUrl"
-                  readonly
-                  label="產生的網址"
-                  variant="outlined"
-                  hide-details
-                  prepend-inner-icon="mdi-link-variant"
-                  :append-inner-icon="
-                    isCopied ? 'mdi-emoticon-happy' : 'mdi-emoticon-neutral'
-                  "
-                  v-bind="props"
-                ></v-text-field>
-              </template>
-              <div class="text-subtitle-1">
-                {{ combineUrl }}
-              </div>
-            </v-tooltip>
+            <v-text-field
+              v-model="outputUrl"
+              readonly
+              label="產生短網址"
+              variant="outlined"
+              hide-details
+              prepend-inner-icon="mdi-link-variant"
+              :append-inner-icon="
+                isCopied ? 'mdi-emoticon-happy' : 'mdi-emoticon-neutral'
+              "
+            ></v-text-field>
           </client-only>
         </v-col>
         <v-col cols="12" sm="3">
@@ -255,6 +275,23 @@ onMounted(async () => {})
         </v-col>
       </v-row>
     </v-card>
+    <v-snackbar
+      v-model="snackbar.show"
+      :timeout="snackbar.timeout"
+      :color="snackbar.type"
+    >
+      <div class="text-h6">
+        {{ snackbar.message }}
+      </div>
+      <template #actions>
+        <v-btn
+          color="white"
+          variant="text"
+          @click="snackbar.show = false"
+          icon="mdi-close"
+        ></v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
