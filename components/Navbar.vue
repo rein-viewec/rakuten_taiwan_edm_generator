@@ -6,20 +6,23 @@ const data = reactive({
   rail: true,
   darkTheme: true,
   links: [
-    // {
-    //   title: 'Welcome Rakuten Taiwan Widget',
-    //   to: '/',
-    //   icon: 'mdi-robot',
-    // },
     {
-      title: 'Event EDM Generator 1.0',
-      to: '/generator/edm',
-      icon: 'mdi-image-album',
+      title: 'RSelect Widgets 首頁',
+      to: '/',
+      icon: 'mdi-robot',
     },
     {
-      title: 'Track URL Generator 1.0',
+      title: 'Event EDM 產生工具',
+      to: '/generator/edm',
+      icon: 'mdi-tooltip-image',
+      description:
+        '依照格式上傳檔案後可以依照上傳的圖片或商品連結，產生可以直接下載的 EDM',
+    },
+    {
+      title: '追蹤短網址產生工具',
       to: '/generator/track-url',
-      icon: 'mdi-link-variant-plus',
+      icon: 'mdi-file-link',
+      description: '輸入希望追蹤的網址，來產生追蹤網址或是短網址',
     },
   ],
   userOptions: [],
@@ -76,7 +79,7 @@ onMounted(() => {
       ></v-app-bar-nav-icon>
       <nuxt-link to="/">
         <v-toolbar-title>
-          Rakuten Taiwan Widget
+          RSelect Widgets
         </v-toolbar-title>
       </nuxt-link>
       <v-spacer></v-spacer>

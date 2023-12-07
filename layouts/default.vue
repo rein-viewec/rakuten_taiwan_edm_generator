@@ -23,7 +23,7 @@ const { created, darkTheme, backgroundColor } = toRefs(data)
     <Navbar />
     <v-main :style="{ 'background-color': backgroundColor }">
       <v-container fluid>
-        <router-view class="pa-8"></router-view>
+        <router-view class="pa-4"></router-view>
       </v-container>
     </v-main>
     <Footer />
