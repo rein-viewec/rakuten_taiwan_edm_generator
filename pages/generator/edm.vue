@@ -130,9 +130,49 @@ const methods = {
     const list = [['product_image_link', 'product_url', 'top_banner']]
     const templateLine = [
       [
-        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Nov1_EDM/01.jpg',
-        'https://www.rakuten.com.tw/shop/rselect/product/R24-kobe-beauty-labo-main-salo6/',
-        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Nov1_EDM/Top%20banner.jpg',
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_01.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R15-10004390/',
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/Top-Banner.jpg',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_02.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/5x9spq7s3/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_03.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R02-royce-32/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_04.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R61-0102071/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_05.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R60-14763/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_06.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R60-21384/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_07.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R29-10001270/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_08.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R27-207027/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_09.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R70-k14550/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_10.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/R10-tmcf01428/',
+      ],
+      [
+        'https://shop.r10s.com/b6e59d20-f684-11ec-932a-0242ac110009/Dec_EDM/231201_11.jpg',
+        'https://www.rakuten.com.tw/shop/rselect/product/xkyoxonkc/',
       ],
     ]
     for (const line of templateLine) {

@@ -158,7 +158,7 @@ onMounted(() => {
           <v-row align="center" class="pt-6">
             <v-col cols="12">
               <div class="headline">
-                輸入希望追蹤的網址，並按下產生，來產生追蹤短網址
+                輸入目標網址，可以直接產生 UTM 網址，或透過 reurl 短網址工具產生短網址
               </div>
             </v-col>
           </v-row>
